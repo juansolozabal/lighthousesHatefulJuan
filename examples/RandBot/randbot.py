@@ -36,16 +36,16 @@ class RandBot(interface.Bot):
                     if possible_connections:
                         return self.connect(random.choice(possible_connections))
 
-        betterManhattan = 9999
-        targetLh = lighthouses[0]
-        for lh in (state["lighthouses"]):
-            xLH, yLH = lh["position"]
-            if lh["owner"] != self.player_num:
-                if betterManhattan != 0 and betterManhattan > max(abs(xLH-cx), abs(yLH-cy)):
-                    betterManhattan = max(abs(xLH-cx), abs(yLH-cy))
-                    targetLh = lh["position"]
-        xcoord, ycoord = targetLh["position"]
-
+#        betterManhattan = 9999
+#        for lh in (state["lighthouses"]):
+#            xLH, yLH = lh["position"]
+#            if lh["owner"] != self.player_num:
+#                if betterManhattan != 0 and betterManhattan > max(abs(xLH-cx), abs(yLH-cy)):
+#                    betterManhattan = max(abs(xLH-cx), abs(yLH-cy))
+#                    targetLh = lh["position"]
+#        xcoord, ycoord = targetLh["position"]
+        lh = state["lighthouses"][1]
+        xcoord, ycoord = lh["position"]
         if cx < xcoord:
             if cy < ycoord:
                 #return upright
