@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import math
 import random, sys
 import interface
 
@@ -36,17 +36,46 @@ class RandBot(interface.Bot):
                     if possible_connections:
                         return self.connect(random.choice(possible_connections))
 
-            # Probabilidad 60%: recargar el faro
-            if random.randrange(100) < 60:
-                energy = random.randrange(state["energy"] + 1)
-                return self.attack(energy)
+        betterManhattan = 9999
+        targetLh = lighthouses[0]
+        for lh in (state["lighthouses"]):
+            xLH, yLH = lh["position"]
+            if lh["owner"] != self.player_num:
+                if betterManhattan != 0 and betterManhattan > max(abs(xLH-cx), abs(yLH-cy)):
+                    betterManhattan = max(abs(xLH-cx), abs(yLH-cy))
+                    targetLh = lh["position"]
+        xcoord, ycoord = targetLh["position"]
 
-        # Mover aleatoriamente
-        moves = ((-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1))
-        # Determinar movimientos válidos
-        moves = [(x,y) for x,y in moves if self.map[cy+y][cx+x]]
-        move = random.choice(moves)
+        if cx < target["position"][0]:
+            if cy < ycoord:
+                #return upright
+                move = [1,1]
+            if cy > ycoord:
+                #return downright
+                move = [1,-1]
+            if cy == ycoord:
+                #return right
+                move = [1,0]
+        if cx > xcoord:
+            if cy < target[1]:
+                #return upleft
+                move = [-1,1]
+            if cy > ycoord:
+                #return downleft
+                move = [-1,-1]
+            if cy == ycoord:
+                #return left
+                move = [-1,0]
+        if cx == xcoord:
+            if cy < ycoord:
+                #return up
+                return [0,1]
+            if cy > ycoord:
+                #return down
+                return [0,-1]
         return self.move(*move)
+
+
 
 if __name__ == "__main__":
     iface = interface.Interface(RandBot)
