@@ -47,8 +47,8 @@ class RandBot(interface.Bot):
 #                    betterManhattan = max(abs(xLH-cx), abs(yLH-cy))
 #                    targetLh = lh["position"]
 #        xcoord, ycoord = targetLh["position"]
-        lh = lighthouses[1]
-        xcoord, ycoord = lh["position"]
+        lhl = lighthouses[1]
+        xcoord, ycoord = lhl["position"]
         if cx < xcoord:
             if cy < ycoord:
                 #return upright
