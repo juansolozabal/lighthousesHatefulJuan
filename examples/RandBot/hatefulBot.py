@@ -89,7 +89,7 @@ class HatefulBot(interface.Bot):
 
         allLh = []
         move = [0,0]
-        for lh in state["lighthouses"]:
+        for lh in lighthouses:
             allLh.append(lh)
 
         xLh, yLh = chooseLighthouse(self, allLh, cx, cy)
