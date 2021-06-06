@@ -44,11 +44,11 @@ class HatefulBot(interface.Bot):
 
         target = chooseLighthouse(allLh, cx, cy)
         move = []
-        if isAStarPossible(allLh, cx, cy):
-            path = aStar([cx, cy], target, state["view"])
-            move = path[0]
-        else:
-            move = getCloserToLighthouse(target, cx, cy)
+        # if isAStarPossible(allLh, cx, cy):
+        #    path = aStar([cx, cy], target, state["view"])
+        #    move = path[0]
+        #else:
+        move = getCloserToLighthouse(target, cx, cy)
         # Mover aleatoriamente
         # moves = ((-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1))
         # Determinar movimientos válidos
@@ -76,31 +76,31 @@ class HatefulBot(interface.Bot):
         return false
 
     def getCloserToLighthouse(target, cx, cy):
-        if cx < target[0]:
-            if cy < target[1]:
+        if cx < target["position"][0]:
+            if cy < target["position"][1]:
                 #return upright
                 return [1,1]
-            if cy > target[1]:
+            if cy > target["position"][1]:
                 #return downright
                 return [1,-1]
-            if cy == target[1]:
+            if cy == target["position"][1]:
                 #return right
                 return [1,0]
-        if cx > target[0]:
+        if cx > target["position"][0]:
             if cy < target[1]:
                 #return upleft
                 return [-1,1]
-            if cy > target[1]:
+            if cy > target["position"][1]:
                 #return downleft
                 return [-1,-1]
-            if cy == target[1]:
+            if cy == target["position"][1]:
                 #return left
                 return [-1,0]
         if cx == target[0]:
-            if cy < target[1]:
+            if cy < target["position"][1]:
                 #return up
                 return [0,1]
-            if cy > target[1]:
+            if cy > target["position"][1]:
                 #return down
                 return [0,-1]
 
