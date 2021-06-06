@@ -46,7 +46,7 @@ class RandBot(interface.Bot):
                     targetLh = lh["position"]
         xcoord, ycoord = targetLh["position"]
 
-        if cx < target["position"][0]:
+        if cx < xcoord:
             if cy < ycoord:
                 #return upright
                 move = [1,1]
