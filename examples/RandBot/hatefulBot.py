@@ -4,6 +4,55 @@
 import random, sys
 import interface
 
+def chooseLighthouse(self, lighthouses, cx, cy):
+    betterManhattan = 9999
+    targetLh = lighthouses[0]
+    for lh in lighthouses:
+        xLh, yLh = lh["position"]
+        if lh["owner"] != self.player_num:
+            if betterManhattan != 0 and betterManhattan > max(abs(xLh-cx), abs(yLh-cy)):
+                betterManhattan = max(abs(xLh-cx), abs(yLh-cy))
+                targetLh = lh
+    return targetLh["position"]
+
+def aStar(start, goal, grid):
+    return [[1,0]]
+
+def isAStarpossible(lighthouses, cx, cy):
+    for lh in lighthouses:
+        if(max(abs(lh["position"][0]-cx), abs(lh["position"][1]-cy)<=3)):
+            return true
+    return false
+
+ def getCloserToLighthouse(xLh, yLh, cx, cy):
+    if cx < xLh:
+        if cy < yLh:
+            #return upright
+            return [1,1]
+        if cy > yLh:
+            #return downright
+            return [1,-1]
+        if cy == yLh:
+            #return right
+            return [1,0]
+    if cx > xLh:
+        if cy < yLh:
+            #return upleft
+            return [-1,1]
+        if cy > yLh:
+            #return downleft
+            return [-1,-1]
+        if cy == yLh:
+            #return left
+            return [-1,0]
+    if cx == xLh:
+        if cy < yLh:
+            #return up
+            return [0,1]
+        if cy > yLh:
+            #return down
+            return [0,-1]
+
 class HatefulBot(interface.Bot):
     """Bot de los hateful four."""
     NAME = "HatefulBot"
@@ -38,71 +87,16 @@ class HatefulBot(interface.Bot):
                 if possible_connections:
                     return self.connect(random.choice(possible_connections))
 
-            #Si no somos duenyos, conquistar
-            if lighthouses[(cx, cy)]["owner"] != self.player_num:
-                return self.attack(energy)
+        allLh = []
+        move = [0,0]
+        for lh in state["lighthouses"]:
+            allLh.append(lh)
 
-        target = chooseLighthouse(allLh, cx, cy)
-        move = []
-        # if isAStarPossible(allLh, cx, cy):
-        #    path = aStar([cx, cy], target, state["view"])
-        #    move = path[0]
-        #else:
-        move = getCloserToLighthouse(target, cx, cy)
-        # Mover aleatoriamente
-        # moves = ((-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1))
-        # Determinar movimientos válidos
-        # moves = [(x,y) for x,y in path if self.map[cy+y][cx+x]]
-        
+        xLh, yLh = chooseLighthouse(self, allLh, cx, cy)
+        move = getCloserToLighthouse(xLh, yLh, cx, cy)   
+
         return self.move(*move)
 
-    def chooseLighthouse(lighthouses, cx, cy):
-        betterManhattan = 9999
-        targetLh = lighthouses[0]
-        for lh in lighthouses:
-            if lh["owner"] != self.player_num:
-                if betterManhattan != 0 and betterManhattan > max(abs(lh["position"][0]-cx), abs(lh["position"][1]-cy)):
-                    betterManhattan = max(abs(lh["position"][0]-cx), abs(lh["position"][1]-cy))
-                    targetLh = lh
-        return targetLh
-
-    def aStar(start, goal, grid):
-        return [[1,0]]
-
-    def isAStarpossible(lighthouses, cx, cy):
-        for lh in lighthouses:
-            if(max(abs(lh["position"][0]-cx), abs(lh["position"][1]-cy)<=3)):
-                return true
-        return false
-
-    def getCloserToLighthouse(target, cx, cy):
-        if cx < target["position"][0]:
-            if cy < target["position"][1]:
-                #return upright
-                return [1,1]
-            if cy > target["position"][1]:
-                #return downright
-                return [1,-1]
-            if cy == target["position"][1]:
-                #return right
-                return [1,0]
-        if cx > target["position"][0]:
-            if cy < target[1]:
-                #return upleft
-                return [-1,1]
-            if cy > target["position"][1]:
-                #return downleft
-                return [-1,-1]
-            if cy == target["position"][1]:
-                #return left
-                return [-1,0]
-        if cx == target[0]:
-            if cy < target["position"][1]:
-                #return up
-                return [0,1]
-            if cy > target["position"][1]:
-                #return down
-                return [0,-1]
 
 if __name__ == "__main__":
     iface = interface.Interface(HatefulBot)
