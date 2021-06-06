@@ -87,7 +87,7 @@ class HatefulBot(interface.Bot):
                 if possible_connections:
                     return self.connect(random.choice(possible_connections))
 
-        allLh = []
+        allLh = lighthouses[]
         move = [0,0]
         for lh in lighthouses:
             allLh.append(lh)
