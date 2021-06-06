@@ -69,10 +69,10 @@ class RandBot(interface.Bot):
         if cx == xcoord:
             if cy < ycoord:
                 #return up
-                return [0,1]
+                move = [0,1]
             if cy > ycoord:
                 #return down
-                return [0,-1]
+                move = [0,-1]
         return self.move(*move)
 
 
