@@ -1,19 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import math
-import random, sys
-import interface
 
-def chooseLighthouse(self, lighthouses, cx, cy):
-    betterManhattan = 9999
-    targetLh = lighthouses[0]
-    for lh in lighthouses:
-        xLh, yLh = lh["position"]
-        if lh["owner"] != self.player_num:
-            if betterManhattan != 0 and betterManhattan > max(abs(xLh-cx), abs(yLh-cy)):
-                betterManhattan = max(abs(xLh-cx), abs(yLh-cy))
-                targetLh = lh
-    return targetLh["position"]
+import random, sys, math
+import interface
 
 def aStar(start, goal, grid):
     return [[1,0]]
@@ -24,7 +13,7 @@ def isAStarpossible(lighthouses, cx, cy):
             return true
     return false
 
- def getCloserToLighthouse(xLh, yLh, cx, cy):
+def getCloserToLighthouse(xLh, yLh, cx, cy):
     if cx < xLh:
         if cy < yLh:
             #return upright
@@ -53,8 +42,19 @@ def isAStarpossible(lighthouses, cx, cy):
             #return down
             return [0,-1]
 
+def chooseLighthouse(self, lighthouses, cx, cy):
+    betterManhattan = 9999
+    targetLh = lighthouses[0]
+    for lh in lighthouses:
+        xLh, yLh = lh["position"]
+        if lh["owner"] != self.player_num:
+            if max(abs(xLh-cx), abs(yLh-cy)) != 0 and betterManhattan > max(abs(xLh-cx), abs(yLh-cy)):
+                betterManhattan = max(abs(xLh-cx), abs(yLh-cy))
+                targetLh = lh
+    return targetLh["position"]
+
 class HatefulBot(interface.Bot):
-    """Bot de los hateful four."""
+    """Bot que juega utilizando la distancia betterManhattan."""
     NAME = "HatefulBot"
 
     def play(self, state):
@@ -63,13 +63,10 @@ class HatefulBot(interface.Bot):
         cx, cy = state["position"]
         lighthouses = dict((tuple(lh["position"]), lh)
                             for lh in state["lighthouses"])
-            allLh = []
-        for lh in state["lighthouses"]:
-            allLh.append(lh)
 
         # Si estamos en un faro...
         if (cx, cy) in lighthouses:
-            # Si podemos hacer conexion, conectar con faro remoto válido
+            # Probabilidad 60%: conectar con faro remoto válido
             if lighthouses[(cx, cy)]["owner"] == self.player_num:
                 possible_connections = []
                 for dest in lighthouses:
@@ -87,16 +84,26 @@ class HatefulBot(interface.Bot):
                 if possible_connections:
                     return self.connect(random.choice(possible_connections))
 
-        allLh = lighthouses[]
-        move = [0,0]
-        for lh in lighthouses:
-            allLh.append(lh)
+            #Si no somos duenyos, conquistar
+            energy = state["energy"]
+            if lighthouses[(cx, cy)]["owner"] != self.player_num and energy != 0:
+                return self.attack(energy)
 
+        allLh = []
+        move = [0,0]
+        for lh in state["lighthouses"]:
+            allLh.append(lh)
+        
         xLh, yLh = chooseLighthouse(self, allLh, cx, cy)
-        move = getCloserToLighthouse(xLh, yLh, cx, cy)   
+        move = getCloserToLighthouse(xLh, yLh, cx, cy)
+        moves = ((-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1))
+        # Determinar movimientos validos
+        moves = [(x,y) for x,y in moves if self.map[cy+y][cx+x]]
+        # Comprobacion para que no se quede atascado el bot
+        if tuple(move) not in moves:     
+            move = random.choice(moves) 
 
         return self.move(*move)
-
 
 if __name__ == "__main__":
     iface = interface.Interface(HatefulBot)
